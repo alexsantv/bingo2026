@@ -1,39 +1,25 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Consulta de Pagos</title>
-<style>
-body { font-family: Arial; max-width: 600px; margin: auto; }
-input, button { padding: 8px; margin: 5px 0; width: 100%; }
-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
-</style>
-</head>
-<body>
-
-<h2>Consulta de Pagos y Créditos</h2>
-
-<input id="cedula" placeholder="Ingrese su cédula">
-<button onclick="consultar()">Consultar</button>
-
-<div id="resultado"></div>
-
 <script>
 function consultar() {
-  const cedula = document.getElementById("cedula").value;
-  if (!cedula) return alert("Ingrese la cédula");
+  const cedula = document.getElementById("cedula").value.trim();
+  if (!cedula) {
+    alert("Ingrese la cédula");
+    return;
+  }
 
   fetch("https://script.google.com/macros/s/AKfycbwa7Tk1bluLvyvRCQV2zvEi8vZ1OvEnZptBZE0qn-BRr9cvli_efxs70aFFaqo2xxpP/exec?cedula=" + cedula)
     .then(res => res.json())
     .then(data => {
-      if (data.length === 0) {
-        document.getElementById("resultado").innerHTML = "No hay registros";
+      if (!data.movimientos || data.movimientos.length === 0) {
+        document.getElementById("resultado").innerHTML =
+          "<p>No hay registros para esta cédula</p>";
         return;
       }
 
-      let html = "<table><tr><th>Fecha</th><th>Detalle</th><th>Pago</th><th>Crédito</th></tr>";
-      data.forEach(m => {
+      let html = `<h3>Nombre: ${data.nombre}</h3>`;
+      html += "<table>";
+      html += "<tr><th>Fecha</th><th>Detalle</th><th>Pago</th><th>Crédito</th></tr>";
+
+      data.movimientos.forEach(m => {
         html += `<tr>
           <td>${m.fecha}</td>
           <td>${m.descripcion}</td>
@@ -41,12 +27,14 @@ function consultar() {
           <td>${m.credito}</td>
         </tr>`;
       });
+
       html += "</table>";
 
       document.getElementById("resultado").innerHTML = html;
+    })
+    .catch(() => {
+      document.getElementById("resultado").innerHTML =
+        "<p>Error al consultar los datos</p>";
     });
 }
 </script>
-
-</body>
-</html>
