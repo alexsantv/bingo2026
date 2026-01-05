@@ -1,3 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Consulta de Pagos</title>
+<style>
+body { font-family: Arial; max-width: 600px; margin: auto; }
+input, button { padding: 8px; margin: 5px 0; width: 100%; }
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+</style>
+</head>
+<body>
+
+<h2>Consulta de Pagos y Créditos</h2>
+
+<input id="cedula" placeholder="Ingrese su cédula">
+<button onclick="consultar()">Consultar</button>
+
+<div id="resultado"></div>
+
 <script>
 function consultar() {
   const cedula = document.getElementById("cedula").value.trim();
@@ -38,3 +59,6 @@ function consultar() {
     });
 }
 </script>
+
+</body>
+</html>
