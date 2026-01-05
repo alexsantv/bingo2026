@@ -27,7 +27,7 @@ function consultar() {
     return;
   }
 
-  fetch("https://script.google.com/macros/s/AKfycbwa7Tk1bluLvyvRCQV2zvEi8vZ1OvEnZptBZE0qn-BRr9cvli_efxs70aFFaqo2xxpP/exec?cedula=" + cedula)
+  fetch("https://script.google.com/macros/s/AKfycbw-U67cHS32TnNflrbrFtVBajPLdL2CUH1jO9renYfgCU6NLj0WpSbpqOEHojRa0IsO/exec?cedula=" + cedula)
     .then(res => res.json())
     .then(data => {
       if (!data.movimientos || data.movimientos.length === 0) {
@@ -62,3 +62,4 @@ function consultar() {
 
 </body>
 </html>
+
