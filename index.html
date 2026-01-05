@@ -28,8 +28,11 @@ function consultar() {
   }
 
   fetch("https://script.google.com/macros/s/AKfycbxH4wzIBGs8S1YVLr0-voRj39m_a7v2nNaIgvS3tIQ_TfdokYwEBOq4iGvgZSzYDb3o/exec?cedula=" + cedula)
-    .then(res => res.json())
+    .then(response => response.json())
     .then(data => {
+
+      console.log("Respuesta del script:", data); // 👈 DEBUG
+
       if (!data.movimientos || data.movimientos.length === 0) {
         document.getElementById("resultado").innerHTML =
           "<p>No hay registros para esta cédula</p>";
@@ -50,10 +53,10 @@ function consultar() {
       });
 
       html += "</table>";
-
       document.getElementById("resultado").innerHTML = html;
     })
-    .catch(() => {
+    .catch(error => {
+      console.error(error);
       document.getElementById("resultado").innerHTML =
         "<p>Error al consultar los datos</p>";
     });
@@ -62,5 +65,6 @@ function consultar() {
 
 </body>
 </html>
+
 
 
