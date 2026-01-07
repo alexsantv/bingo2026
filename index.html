@@ -2,22 +2,101 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Consulta de Pagos</title>
+
 <style>
-body { font-family: Arial; max-width: 600px; margin: auto; }
-input, button { padding: 8px; margin: 5px 0; width: 100%; }
-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f6fa;
+  margin: 0;
+  padding: 15px;
+}
+
+.container {
+  max-width: 800px;
+  background: #fff;
+  margin: auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h2, h3 {
+  text-align: center;
+}
+
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+button {
+  background: #2c7be5;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+}
+
+button:hover {
+  background: #1a68d1;
+}
+
+.resumen {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.card {
+  background: #f1f3f8;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.card strong {
+  display: block;
+  font-size: 18px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+th {
+  background: #f1f3f8;
+}
+
+@media (max-width: 600px) {
+  .resumen {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 </head>
+
 <body>
 
-<h2>Consulta de Pagos y Créditos</h2>
+<div class="container">
+  <h2>Consulta de Pagos y Créditos</h2>
 
-<input id="cedula" placeholder="Ingrese su cédula">
-<button onclick="consultar()">Consultar</button>
+  <input id="cedula" placeholder="Ingrese su cédula">
+  <button onclick="consultar()">Consultar</button>
 
-<div id="resultado"></div>
+  <div id="resultado"></div>
+</div>
 
 <script>
 function consultar() {
@@ -27,36 +106,59 @@ function consultar() {
     return;
   }
 
-  fetch("https://script.google.com/macros/s/AKfycbzmPs5ctypdXPRHVJskRxB8nPwMf8_PgxmXsYbbY4lri950V2Gsov9PxMeXAlnYRFn6/exec?cedula=" + cedula)
-    .then(response => response.json())
+  fetch("https://script.google.com/macros/s/AKfycbyrWlRVI3-ut5TT0nx1TQLcdrX25vsZgPXbtYWCtgjlMWtiPSoZfLLoXLW6Aew-dg_G/exec?cedula=" + cedula)
+    .then(r => r.json())
     .then(data => {
-
-      console.log("Respuesta del script:", data); // 👈 DEBUG
-
       if (!data.movimientos || data.movimientos.length === 0) {
         document.getElementById("resultado").innerHTML =
           "<p>No hay registros para esta cédula</p>";
         return;
       }
 
-      let html = `<h3>Nombre: ${data.nombre}</h3>`;
-      html += "<table>";
-      html += "<tr><th>Fecha</th><th>Detalle</th><th>Pago</th><th>Crédito</th></tr>";
+      let html = `<h3>${data.nombre}</h3>`;
+
+      html += `
+      <div class="resumen">
+        <div class="card">
+          <span>Abonos</span>
+          <strong>$${data.totales.pagos.toFixed(2)}</strong>
+        </div>
+        <div class="card">
+          <span>Créditos</span>
+          <strong>$${data.totales.creditos.toFixed(2)}</strong>
+        </div>
+        <div class="card">
+          <span>Saldo</span>
+          <strong>$${data.totales.saldo.toFixed(2)}</strong>
+        </div>
+      </div>
+      `;
+
+      html += `
+      <table>
+        <tr>
+          <th>Fecha</th>
+          <th>Detalle</th>
+          <th>Abono</th>
+          <th>Crédito</th>
+        </tr>
+      `;
 
       data.movimientos.forEach(m => {
-        html += `<tr>
+        html += `
+        <tr>
           <td>${m.fecha}</td>
           <td>${m.descripcion}</td>
-          <td>${m.pago}</td>
-          <td>${m.credito}</td>
-        </tr>`;
+          <td>${m.pago || ""}</td>
+          <td>${m.credito || ""}</td>
+        </tr>
+        `;
       });
 
       html += "</table>";
       document.getElementById("resultado").innerHTML = html;
     })
-    .catch(error => {
-      console.error(error);
+    .catch(() => {
       document.getElementById("resultado").innerHTML =
         "<p>Error al consultar los datos</p>";
     });
@@ -65,7 +167,3 @@ function consultar() {
 
 </body>
 </html>
-
-
-
-
